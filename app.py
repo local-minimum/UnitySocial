@@ -16,7 +16,7 @@ app = Flask("HighScores")
 
 MD5 = hashlib.md5()
 
-HIGHSCORES_PATTERN = os.path.join(os.path.dirname(__file__, 'db', '{}.json'))
+HIGHSCORES_PATTERN = os.path.join(os.path.dirname(__file__), 'db', '{}.json')
 
 def get_highscore(game, score_type):
     try:
