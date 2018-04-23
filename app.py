@@ -22,6 +22,7 @@ except:
 app = Flask("HighScores")
 
 HIGHSCORES_PATTERN = os.path.join(os.path.dirname(__file__), 'db', '{}.json')
+APP_ROOT = os.environ.get("HIGHSCORE_APP_ROOT", "")
 
 def get_highscores(game, score_type, dtype):
     try:
@@ -30,7 +31,6 @@ def get_highscores(game, score_type, dtype):
     except FileNotFoundError:
         all_highscores = {}
     highscores = [{**e, **{'score': dtype(e['score'])}} for e in all_highscores.get(score_type, [])]
-    logger.error("{} {} {}".format(score_type, dtype, highscores))
     return all_highscores, highscores
 
 def update_highscore(game, score_type, req):
@@ -125,14 +125,18 @@ def get_score_settings(game, score_type):
             return -1
         elif s == "descending":
             return 1
-        else:
+        elif isinstance(s, str):
             return 0
+        else:
+            return s
 
     def _get_type(s):
         if s == "int":
             return int
         elif s == "float":
             return float
+        elif isinstance(s, str):
+            return str
         else:
             return s
 
@@ -156,7 +160,7 @@ def entry_to_raw(entry, delim):
     return "{}{}{}{}{}".format(entry['rank'], delim, entry['name'], delim, entry['score'])
 
 
-@app.route("/highscore/<game>/<score_type>", methods=["POST"])
+@app.route("{}/highscore/<game>/<score_type>".format(APP_ROOT), methods=["POST"])
 def api_post_highscore(game, score_type):
     req = request.form
     try:
@@ -179,7 +183,7 @@ def api_post_highscore(game, score_type):
 
 
 
-@app.route("/highscore/<game>/<score_type>", methods=["GET"])
+@app.route("{}/highscore/<game>/<score_type>".format(APP_ROOT), methods=["GET"])
 def api_get_highscore(game, score_type):
     if not has_game_scores(game, score_type):
         logger.error('Unknown Game/Score {}/{}'.format(game, score_type))
