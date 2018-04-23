@@ -2,12 +2,18 @@
 import os
 import hashlib
 import json
+import logging
 from functools import cmp_to_key
 
 from flask import Flask, request, abort
 
+logging.setLevel(logging.INFO)
+
+settings_path = os.path.join(os.path.dirname(__file__), 'settings', 'settings.json'))
+logging.info("Settings in: {}".format(settings_path))
+
 try:
-    with open(os.path.join(os.path.dirname(__file__, 'settings', 'settings.json'))) as fh:            
+    with open(settings_path) as fh:            
         settings = json.load(fh)
 except:
     settings = {}
@@ -135,9 +141,10 @@ def post_highscore(game, score_type):
 
 @app.route("/highscore/<game>/<score_type>", methods=["GET"])
 def get_highscore(game, score_type):
+    print('hello')
     if not has_game_scores(game, score_type):
-        print('Unknown Game/Score {}/{}'.format(game, score_type))
-        print('{}'.format(settings))
+        logging.error('Unknown Game/Score {}/{}'.format(game, score_type))
+        logging.error('Settings: {}'.format(settings))
         abort(404)
     count = 10
     _, highscores = get_highscore(game, score_type)
@@ -145,7 +152,7 @@ def get_highscore(game, score_type):
     game_settings = get_game_settings(game)
     if (game_settings['format'] == 'raw'):
         return game_settings['line'].join([entry_to_score(entry, game_settings['delimiter']) for entry in scores])
-    print("{}".format(game_settings))
+    logging.error("Game Settings: {}".format(game_settings))
     abort(404)
 
 
