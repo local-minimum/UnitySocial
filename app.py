@@ -8,7 +8,7 @@ from flask import Flask, request, abort
 
 try:
     with open(os.path.join(os.path.dirname(__file__, 'settings', 'settings.json'))) as fh:            
-        settings = json.load(fh))
+        settings = json.load(fh)
 except:
     settings = {}
 
