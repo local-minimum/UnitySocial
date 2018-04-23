@@ -14,3 +14,4 @@ Thumbs.db
 # ================= #
 .~lock.*
 *.pyc
+docker-compose.yml
