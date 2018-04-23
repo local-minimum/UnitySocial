@@ -136,6 +136,8 @@ def post_highscore(game, score_type):
 @app.route("/highscore/<game>/<score_type>", methods=["GET"])
 def get_highscore(game, score_type):
     if not has_game_scores(game, score_type):
+        print('Unknown Game/Score {}/{}'.format(game, score_type))
+        print('{}'.format(settings))
         abort(404)
     count = 10
     _, highscores = get_highscore(game, score_type)
