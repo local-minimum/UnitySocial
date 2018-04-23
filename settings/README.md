@@ -13,15 +13,14 @@ Using JSON should have settings in `settings.json`.
         delimiter: "\t",
 	line: "\n"
       },
-      scores: [
-        {
-	  name: "birding",
+      scores: { 
+        birding: {
 	  sort: "ascending",
 	  score: "int",
 	  min: 0,
 	  max: 1000,
 	}
-      ]
+      }
     }
   }
 }
