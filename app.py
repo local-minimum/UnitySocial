@@ -145,6 +145,7 @@ def get_highscore(game, score_type):
     game_settings = get_game_settings(game)
     if (game_settings['format'] == 'raw'):
         return game_settings['line'].join([entry_to_score(entry, game_settings['delimiter']) for entry in scores])
+    print("{}".format(game_settings))
     abort(404)
 
 
