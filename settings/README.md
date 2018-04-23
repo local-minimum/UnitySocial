@@ -4,7 +4,7 @@ Using JSON should have settings in `settings.json`.
 
 ```
 {
-  system: {
+  settings: {
   },
   games: {
     mygame: {

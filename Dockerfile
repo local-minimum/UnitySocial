@@ -1,5 +1,5 @@
-FROM py3
-pip install flask
+FROM python:3
+RUN pip install flask
 
 COPY app.py /app/app.py
 RUN mkdir /app/db

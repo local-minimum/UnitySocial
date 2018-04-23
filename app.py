@@ -7,7 +7,7 @@ from functools import cmp_to_key
 from flask import Flask, request, abort
 
 try:
-    with open(os.path.join(os.path.dirname(__file__, 'settings', 'settings.json')) as fh:            
+    with open(os.path.join(os.path.dirname(__file__, 'settings', 'settings.json'))) as fh:            
         settings = json.load(fh))
 except:
     settings = {}
