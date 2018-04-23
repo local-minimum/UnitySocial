@@ -15,3 +15,5 @@ Thumbs.db
 .~lock.*
 *.pyc
 docker-compose.yml
+/settings/settings.json
+/db/*.json
