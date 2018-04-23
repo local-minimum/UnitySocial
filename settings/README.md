@@ -8,7 +8,7 @@ Using JSON should have settings in `settings.json`.
   },
   games: {
     mygame: {
-      format: {
+      settings: {
         type: "raw",
         delimiter: "\t",
 	line: "\n"

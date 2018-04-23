@@ -7,10 +7,11 @@ from functools import cmp_to_key
 
 from flask import Flask, request, abort
 
-logging.setLevel(logging.INFO)
+logger = logging.getLogger('app')
+logger.setLevel(logging.INFO)
 
-settings_path = os.path.join(os.path.dirname(__file__), 'settings', 'settings.json'))
-logging.info("Settings in: {}".format(settings_path))
+settings_path = os.path.join(os.path.dirname(__file__), 'settings', 'settings.json')
+logger.info("Settings in: {}".format(settings_path))
 
 try:
     with open(settings_path) as fh:            
@@ -24,7 +25,7 @@ MD5 = hashlib.md5()
 
 HIGHSCORES_PATTERN = os.path.join(os.path.dirname(__file__), 'db', '{}.json')
 
-def get_highscore(game, score_type):
+def get_highscores(game, score_type):
     try:
         with open(HIGHSCORES_PATTERN.format(game)) as fh:
             all_highscores = json.parse(fh)
@@ -33,7 +34,7 @@ def get_highscore(game, score_type):
     return all_highscores, all_highscores.get(score_type, [])
 
 def update_highscore(game, score_type, req):
-    all_highscores, highscore = get_highscore(game, score_type)
+    all_highscores, highscore = get_highscores(game, score_type)
     score_settings = get_score_settings(game, score_type)    
     entry = {
         "name": req["name"],
@@ -76,8 +77,9 @@ def has_game_scores(game, score_type):
     game_settings = settings.get('games', {}).get(game, {})
     if not game_settings:
         return False
-    if not game_settings.get(score_type, {}):
+    if not game_settings.get('scores', {}).get(score_type, {}):
         return False
+    return True
 
 def get_game_settings(game):
     game_settings = settings.get('games', {}).get('settings', {
@@ -104,7 +106,7 @@ def get_score_settings(game, score_type):
         else:
             return str
 
-    game_settings = settings.get('games', {}).get(game, {})
+    game_settings = settings.get('games', {}).get('scores', {}).get(game, {})
     score_settings = game_settings.get(score_type, {
 	"sort": "ascending",
 	"score": "int",
@@ -123,13 +125,13 @@ def entry_to_raw(entry, delim):
 
 
 @app.route("/highscore/<game>/<score_type>", methods=["POST"])
-def post_highscore(game, score_type):
+def api_post_highscore(game, score_type):
     req = request.json()
     try:
         if is_valid_request(game, score_type, req):
             ranked_entry = update_highscore(game, score_type, req)
             game_settings = get_game_settings(game)
-            if (game_settings['format'] == 'raw'):
+            if (game_settings['type'] == 'raw'):
                 return entry_to_score(ranked_entry, game_settings['delimiter'])
             abort(404)
         else:
@@ -140,19 +142,19 @@ def post_highscore(game, score_type):
 
 
 @app.route("/highscore/<game>/<score_type>", methods=["GET"])
-def get_highscore(game, score_type):
-    print('hello')
+def api_get_highscore(game, score_type):
     if not has_game_scores(game, score_type):
-        logging.error('Unknown Game/Score {}/{}'.format(game, score_type))
-        logging.error('Settings: {}'.format(settings))
+        logger.error('Unknown Game/Score {}/{}'.format(game, score_type))
+        logger.error('Settings: {}'.format(settings))
         abort(404)
     count = 10
-    _, highscores = get_highscore(game, score_type)
+    _, highscores = get_highscores(game, score_type)
+    score_settings = get_score_settings(game, score_type)
     scores = get_sorted_ranked_scores(highscores, score_settings["sort"])
     game_settings = get_game_settings(game)
-    if (game_settings['format'] == 'raw'):
+    if (game_settings['type'] == 'raw'):
         return game_settings['line'].join([entry_to_score(entry, game_settings['delimiter']) for entry in scores])
-    logging.error("Game Settings: {}".format(game_settings))
+    logger.error("Game Settings: {}".format(game_settings))
     abort(404)
 
 
