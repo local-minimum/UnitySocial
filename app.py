@@ -23,21 +23,27 @@ app = Flask("HighScores")
 
 HIGHSCORES_PATTERN = os.path.join(os.path.dirname(__file__), 'db', '{}.json')
 
-def get_highscores(game, score_type):
+def get_highscores(game, score_type, dtype):
     try:
         with open(HIGHSCORES_PATTERN.format(game)) as fh:
             all_highscores = json.load(fh)
     except FileNotFoundError:
         all_highscores = {}
-    return all_highscores, all_highscores.get(score_type, [])
+    highscores = [{**e, **{'score': dtype(e['score'])}} for e in all_highscores.get(score_type, [])]
+    logger.error("{} {} {}".format(score_type, dtype, highscores))
+    return all_highscores, highscores
 
 def update_highscore(game, score_type, req):
-    all_highscores, highscores = get_highscores(game, score_type)
     score_settings = get_score_settings(game, score_type)    
-    entry = {
-        "name": req["name"],
-        "score": score_settings["score"](req["score"])
-    }
+    all_highscores, highscores = get_highscores(game, score_type, score_settings['score'])
+    try:
+        entry = {
+            "name": req["name"],
+            "score": score_settings["score"](req["score"])
+        }
+    except ValueError:
+        logger.error("settings {} req {}".format(score_settings, req))
+        abort(403)
     highscores.append(entry)
 
     all_highscores[score_type] = highscores
@@ -98,10 +104,10 @@ def get_checksum(req):
 
 
 def has_game_scores(game, score_type):
-    game_settings = settings.get('games', {}).get(game, {})
+    game_settings = settings.get('games', {}).get(game, False)
     if not game_settings:
         return False
-    if not game_settings.get('scores', {}).get(score_type, {}):
+    if not game_settings.get('scores', {}).get(score_type, False):
         return False
     return True
 
@@ -128,9 +134,11 @@ def get_score_settings(game, score_type):
         elif s == "float":
             return float
         else:
-            return str
+            return s
 
-    game_settings = settings.get('games', {}).get('scores', {}).get(game, {})
+    game_settings = settings.get('games', {}).get(game, {}).get('scores', {})
+    if score_type not in game_settings:
+        logger.error("{} not in {}".format(score_type, settings))
     score_settings = game_settings.get(score_type, {
 	"sort": "ascending",
 	"score": "int",
@@ -177,8 +185,8 @@ def api_get_highscore(game, score_type):
         logger.error('Unknown Game/Score {}/{}'.format(game, score_type))
         abort(404)
     count = 10
-    a, highscores = get_highscores(game, score_type)
     score_settings = get_score_settings(game, score_type)
+    a, highscores = get_highscores(game, score_type, score_settings['score'])
     scores = get_sorted_ranked_scores(highscores, score_settings["sort"])
     game_settings = get_game_settings(game)
     if (game_settings['type'] == 'raw'):
