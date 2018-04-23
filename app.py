@@ -21,20 +21,18 @@ except:
 
 app = Flask("HighScores")
 
-MD5 = hashlib.md5()
-
 HIGHSCORES_PATTERN = os.path.join(os.path.dirname(__file__), 'db', '{}.json')
 
 def get_highscores(game, score_type):
     try:
         with open(HIGHSCORES_PATTERN.format(game)) as fh:
-            all_highscores = json.parse(fh)
-    except:
+            all_highscores = json.load(fh)
+    except FileNotFoundError:
         all_highscores = {}
     return all_highscores, all_highscores.get(score_type, [])
 
 def update_highscore(game, score_type, req):
-    all_highscores, highscore = get_highscores(game, score_type)
+    all_highscores, highscores = get_highscores(game, score_type)
     score_settings = get_score_settings(game, score_type)    
     entry = {
         "name": req["name"],
@@ -46,14 +44,41 @@ def update_highscore(game, score_type, req):
     with open(HIGHSCORES_PATTERN.format(game), 'w') as fh:
         json.dump(all_highscores, fh)
     scores = get_sorted_scores(highscores, score_settings["sort"])
-    entry.update(rank=scores.index(entry) + 1)
+    entry.update(rank=get_entry_rank(scores, entry))
     return entry
     
 def get_sorted_scores(highscores, sort_cmp):
     return sorted(highscores, key=cmp_to_key(lambda a, b: sort_cmp * (a["score"] - b["score"])))
 
+def get_entry_rank(scores, entry):
+    val = None
+    rank = 0
+    count = 1
+    for score in scores:
+        if val is None or score['score'] != val:
+            val = score['score']
+            rank += count
+            count = 1
+        else:
+            count += 1
+        if score == entry:
+            return rank
+    return -1
+
 def get_sorted_ranked_scores(highscores, sort_cmp):
-    return [{'rank': i + 1} + entry for i, entry in enumerate(get_sorted_scores(highscores, sort_cmp))]
+    scores = get_sorted_scores(highscores, sort_cmp)
+    val = None
+    rank = 0
+    count = 1
+    for score in scores:
+        if val is None or score['score'] != val:
+            val = score['score']
+            rank += count
+            count = 1
+        else:
+            count += 1
+        score.update(rank=rank)
+    return scores
 
 
 def get_secret():
@@ -69,8 +94,7 @@ def get_concatenated_request(req):
 
 
 def get_checksum(req):
-    MD5.update(get_concatenated_request(req))
-    return MD5.hexdigest()
+    return hashlib.md5(get_concatenated_request(req).encode('utf8')).hexdigest()
 
 
 def has_game_scores(game, score_type):
@@ -92,9 +116,9 @@ def get_game_settings(game):
 def get_score_settings(game, score_type):
     def _get_sort(s):
         if s == "ascending":
-            return 1
-        elif s == "descending":
             return -1
+        elif s == "descending":
+            return 1
         else:
             return 0
 
@@ -117,26 +141,32 @@ def get_score_settings(game, score_type):
 
 
 def is_valid_request(game, score_type, req):
-    return has_game_scores(game, score_type) and req["checksum"] == get_checksum(req)
+    return has_game_scores(game, score_type) and req["checkSum"].lower() == get_checksum(req)
 
 
 def entry_to_raw(entry, delim):
-    return entry['rank'] + delim + entry['name'] + delim + entry['score']
+    return "{}{}{}{}{}".format(entry['rank'], delim, entry['name'], delim, entry['score'])
 
 
 @app.route("/highscore/<game>/<score_type>", methods=["POST"])
 def api_post_highscore(game, score_type):
-    req = request.json()
+    req = request.form
     try:
         if is_valid_request(game, score_type, req):
             ranked_entry = update_highscore(game, score_type, req)
             game_settings = get_game_settings(game)
             if (game_settings['type'] == 'raw'):
-                return entry_to_score(ranked_entry, game_settings['delimiter'])
+                return entry_to_raw(ranked_entry, game_settings['delimiter'])
+            logger.error('Game Settings not supported')
+            abort(404)
+        elif not has_game_scores(game, score_type):
+            logger.error('Unknown Game/Score {}/{}'.format(game, score_type))
             abort(404)
         else:
+            logger.error("Rejected post {}".format(req))
             abort(403)
     except KeyError:
+        logger.error('Request missing stuff {}'.format(req))
         abort(404)
 
 
@@ -145,16 +175,15 @@ def api_post_highscore(game, score_type):
 def api_get_highscore(game, score_type):
     if not has_game_scores(game, score_type):
         logger.error('Unknown Game/Score {}/{}'.format(game, score_type))
-        logger.error('Settings: {}'.format(settings))
         abort(404)
     count = 10
-    _, highscores = get_highscores(game, score_type)
+    a, highscores = get_highscores(game, score_type)
     score_settings = get_score_settings(game, score_type)
     scores = get_sorted_ranked_scores(highscores, score_settings["sort"])
     game_settings = get_game_settings(game)
     if (game_settings['type'] == 'raw'):
-        return game_settings['line'].join([entry_to_score(entry, game_settings['delimiter']) for entry in scores])
-    logger.error("Game Settings: {}".format(game_settings))
+        return game_settings['line'].join([entry_to_raw(entry, game_settings['delimiter']) for entry in scores])
+    logger.error('Unsupported game settings')
     abort(404)
 
 
