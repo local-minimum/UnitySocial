@@ -10,8 +10,8 @@ def _get_secret():
 
 def _get_concatenated_request(req):
     return "{}{}{}".format(
-        req["name"],
-        req["score"],
+        req.get("name", ""),
+        req.get("score", ""),
         _get_secret(),
     )
 
@@ -25,7 +25,7 @@ def _get_checksum(req):
 def is_valid_request(game, score_type, req):
     return (
         settings.has_game_scores(game, score_type)
-        and req["checkSum"].lower() == _get_checksum(req)
+        and req.get("checkSum", '--invalid--').lower() == _get_checksum(req)
     )
 
 
