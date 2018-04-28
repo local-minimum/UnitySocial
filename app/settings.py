@@ -1,6 +1,7 @@
 import os
 import logging
 import json
+from json.decoder import JSONDecoderError
 
 SETTINGS_PATH = os.path.join(
     os.path.dirname(__file__), 'settings', 'settings.json',
@@ -18,6 +19,11 @@ def _settings():
         settings = {}
         _LOGGER.error(
             "Could not locate file {}. ".format(SETTINGS_PATH)
+        )
+    except JSONDecoderError:
+        settings = {}
+        _LOGGER.error(
+            "Settings file is corrupt, please run through json validator",
         )
 
     return settings
