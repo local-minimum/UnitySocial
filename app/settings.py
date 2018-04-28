@@ -1,7 +1,9 @@
 import os
 import logging
 
-SETTINGS_PATH = os.path.join(os.path.dirname(__file__), 'settings', 'settings.json')
+SETTINGS_PATH = os.path.join(
+    os.path.dirname(__file__), 'settings', 'settings.json',
+)
 
 _LOGGER = logging.getLogger('SETTINGS')
 _LOGGER.setLevel(logging.INFO)
@@ -11,9 +13,11 @@ def _settings():
     try:
         with open(SETTINGS_PATH) as fh:
             settings = json.load(fh)
-    except:
+    except FileNotFoundError:
         settings = {}
-        _LOGGER.warning("No settings means server will refuse everything")
+        _LOGGER.error(
+            "Could not locate file {}. ".format(SETTINGS_PATH)
+        )
 
     return settings
 
