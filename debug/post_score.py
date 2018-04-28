@@ -68,6 +68,6 @@ requests.post(
     data = {
         "name": name,
         "score": score,
-        "checkSum": checksum<
+        "checkSum": checksum,
     }
 )
