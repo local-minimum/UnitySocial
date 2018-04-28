@@ -81,7 +81,8 @@ def add_api(app):
         name = settings.get_game_name(game)
         count = 15
         all_highscores = {}
-        for score_type in scores:
+        score_types = list(score.keys())
+        for score_type in score_types:
             score_settings = settings.get_score_settings(game, score_type)
             _, highscores = transactions.get_highscores(
                 game, score_type, score_settings['score'],
@@ -89,7 +90,7 @@ def add_api(app):
             ranked_highscores = actions.get_sorted_ranked_scores(
                 highscores, score_settings["sort"],
             )
-            score_settings.update(
+            scores[score_type].update(
                 count=len(ranked_highscores),
                 type=score_type,
             )

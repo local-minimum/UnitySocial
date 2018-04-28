@@ -9,7 +9,7 @@
     <div class="container">
       <h1>Highscores for: <em>{{ name }}<em></h1>
       {% for score in scores.values() %}
-      <h2>Score: <em>{{ score.name }}</em></h2>
+      <h2>{{ score.name }}</h2>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -19,7 +19,7 @@
           </tr>
         </thead>
         <tbody>
-          {% if score.count == 0 %}
+          {% if not score.count %}
           <tr class="warning">
             <td colspan="3">
               No highscores yet!
