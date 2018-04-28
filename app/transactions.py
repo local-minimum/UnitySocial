@@ -5,7 +5,7 @@ from . import settings
 from . import actions
 
 
-_LOGGER = logging.get_LOGGER('TRANSACTIONS')
+_LOGGER = logging.getLogger('TRANSACTIONS')
 _LOGGER.setLevel(logging.INFO)
 
 HIGHSCORES_PATTERN = os.path.join(os.path.dirname(__file__), 'db', '{}.json')

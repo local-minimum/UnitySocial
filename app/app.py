@@ -5,7 +5,7 @@ from flask import Flask
 
 from . import api
 
-_LOGGER = logging.get_LOGGER('app')
+_LOGGER = logging.getLogger('app')
 _LOGGER.setLevel(logging.INFO)
 
 
@@ -16,5 +16,7 @@ def create_app():
 
 
 if __name__ == "__main__":
+    _LOGGER.info("Starting app")
     app = create_app()
     app.run(host="0.0.0.0")
+    _LOGGER.info("Stopping app")

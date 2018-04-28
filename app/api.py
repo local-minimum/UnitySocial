@@ -5,7 +5,7 @@ from . import settings
 from . import transactions
 from . import actions
 
-_LOGGER = logging.get_LOGGER('API')
+_LOGGER = logging.getLogger('API')
 _LOGGER.setLevel(logging.INFO)
 
 APP_ROOT = os.environ.get("HIGHSCORE_APP_ROOT", "")

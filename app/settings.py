@@ -1,7 +1,7 @@
 import os
 import logging
 
-_LOGGER = logging.get_LOGGER('SETTINGS')
+_LOGGER = logging.getLogger('SETTINGS')
 _LOGGER.setLevel(logging.INFO)
 _LOGGER.info("Settings in: {}".format(SETTINGS_PATH))
 
