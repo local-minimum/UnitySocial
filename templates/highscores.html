@@ -8,7 +8,7 @@
   <body>
     <div class="container">
       <h1>Highscores for: <em>{{ name }}<em></h1>
-      {% for score in scores %}
+      {% for score in scores.values() %}
       <h2>Score: <em>{{ score.name }}</em></h2>
       <table class="table table-striped">
         <thead>
