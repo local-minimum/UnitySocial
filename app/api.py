@@ -81,7 +81,7 @@ def add_api(app):
         name = settings.get_game_name(game)
         count = 15
         all_highscores = {}
-        score_types = list(score.keys())
+        score_types = list(scores.keys())
         for score_type in score_types:
             score_settings = settings.get_score_settings(game, score_type)
             _, highscores = transactions.get_highscores(
