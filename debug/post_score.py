@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import sys
 import requests
-import yml
+import yaml
 import os
 import hashlib
 
-if len(sys.argv != 5):
+if len(sys.argv) != 5:
     print("{} GAME SCORE_NAME NAME SCORE")
     sys.exit(0)
 
@@ -16,7 +16,7 @@ DOCKER_COMPOSE_PATH = os.path.join(
 )
 
 with open(DOCKER_COMPOSE_PATH, 'r') as stream:
-    settings = yml.load(stream)
+    settings = yaml.load(stream)
 
 secret = 'RatatosK'
 port = "5000"
