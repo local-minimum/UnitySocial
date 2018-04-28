@@ -1,9 +1,9 @@
 import os
 import logging
 from flask import request, abort
-import app.settings as settings
-import app.actions as actions
-import app.transactions as transactions
+from . import settings
+from . import transactions
+from . import actions
 
 _LOGGER = logging.get_LOGGER('API')
 _LOGGER.setLevel(logging.INFO)

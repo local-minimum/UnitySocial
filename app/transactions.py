@@ -1,8 +1,8 @@
 import json
 import logging
 
-import app.settings as settings
-import app.actions as actions
+from . import settings
+from . import actions
 
 
 _LOGGER = logging.get_LOGGER('TRANSACTIONS')

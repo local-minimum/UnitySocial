@@ -2,7 +2,7 @@
 import os
 import hashlib
 from functools import cmp_to_key
-import app.settings as settings
+from . import settings
 
 def _get_secret():
     return os.environ.get("HIGHSCORE_SECRET", "RatatosK")
