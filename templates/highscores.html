@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Highscores | {{ name }}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="container">
+      <h1>{{ name }}</h1>
+      {% for score in scores %}
+      <h2>{{ score }}</h2>
+      <table class="table table-striped">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Score</th>
+        </tr>
+        <tr class="warning">
+          <td colspan="3">
+            No highscores yet!
+          </td>
+        </tr>
+      </table>
+      {% endfor %}
+    </div>
+  </body>
+</html>

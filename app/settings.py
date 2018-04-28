@@ -28,6 +28,22 @@ def _settings():
 
     return settings
 
+def get_game_name(game):
+    return (
+        _settings()
+        .get('games', {})
+        .get(game, {})
+        .get('name', game.capitalize())
+    )
+
+def get_game_scores(game):
+    game_settings =_settings().get('games', {}).get(game, False)
+    if not game_settings:
+        _LOGGER.warning("Game {} not in settings".format(game))
+        return {}
+    return game_settings.get('scores', {})
+
+
 def has_game_scores(game, score_type):
     game_settings =_settings().get('games', {}).get(game, False)
     if not game_settings:
@@ -41,7 +57,7 @@ def get_game_settings(game):
     game_settings =_settings().get('games', {}).get('settings', {
         "type": "raw",
         "delimiter": "\t",
-	"line": "\n",
+	    "line": "\n",
     })
     return game_settings
 

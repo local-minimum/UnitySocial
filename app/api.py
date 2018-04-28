@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import request, abort
+from flask import request, abort, render_template
 from . import settings
 from . import transactions
 from . import actions
@@ -72,3 +72,15 @@ def add_api(app):
             )
         _LOGGER.error('Unsupported game settings')
         abort(404)
+
+    @app.route(
+        "{}/highscore/<game>".format(APP_ROOT), methods=["GET"],
+    )
+    def api_get_scores_page(game):
+        scores = settings.get_game_scores(game)
+        name = settings.get_game_name(game)
+        return render_template(
+            'highscores.html',
+            scores=scores,
+            name=name,
+        )
