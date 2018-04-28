@@ -58,7 +58,7 @@ def add_api(app):
             abort(404)
         count = 10
         score_settings = settings.get_score_settings(game, score_type)
-        a, highscores = transactions.get_highscores(
+        _, highscores = transactions.get_highscores(
             game, score_type, score_settings['score'],
         )
         scores = actions.get_sorted_ranked_scores(
@@ -79,8 +79,25 @@ def add_api(app):
     def api_get_scores_page(game):
         scores = settings.get_game_scores(game)
         name = settings.get_game_name(game)
+        count = 15
+        all_highscores = {}
+        for score_type in scores:
+            score_settings = scores[score_type]
+            _, highscores = transactions.get_highscores(
+                game, score_type, score_settings['score'],
+            )
+            ranked_highscores = actions.get_sorted_ranked_scores(
+                highscores, score_settings["sort"],
+            )
+            score_settings.update(
+                count=len(ranked_highscores),
+                type=score_type,
+            )
+            all_highscores[score_type] = ranked_highscores[:count]
+
         return render_template(
             'highscores.html',
             scores=scores,
             name=name,
+            all_highscores=all_highscores,
         )

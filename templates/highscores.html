@@ -7,20 +7,39 @@
   </head>
   <body>
     <div class="container">
-      <h1>{{ name }}</h1>
+      <h1>Highscores for: <em>{{ name }}<em></h1>
       {% for score in scores %}
-      <h2>{{ score }}</h2>
+      <h2>Score: <em>{{ score.name }}</em></h2>
       <table class="table table-striped">
-        <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Score</th>
-        </tr>
-        <tr class="warning">
-          <td colspan="3">
-            No highscores yet!
-          </td>
-        </tr>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if score.count == 0 %}
+          <tr class="warning">
+            <td colspan="3">
+              No highscores yet!
+            </td>
+          </tr>
+          {% else %}
+          <tr class="success">
+            <td colspan="3">
+              {{ score.count }} highscores registered.
+            </td>
+          </tr>
+          {% endif %}
+          {% for entry in all_highscores[score.type] %}
+          <tr>
+            <th scope="row">{{ entry.rank }}</th>
+            <td>{{ entry.name }}</td>
+            <td>{{ entry.score }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
       </table>
       {% endfor %}
     </div>
