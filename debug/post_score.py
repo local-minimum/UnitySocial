@@ -55,7 +55,7 @@ checksum = hashlib.md5(
 
 print(
     "localhost:{}{}/highscore/{}/{}".format(
-        port, root, game, score_type,
+        port, service, game, score_type,
     ),
 )
 print("name {} score {} checksum {}".format(name, score, checksum))
@@ -63,7 +63,7 @@ sys.exit(0)
 
 requests.post(
     "localhost:{}{}/highscore/{}/{}".format(
-        port, root, game, score_type,
+        port, service, game, score_type,
     ),
     data = {
         "name": name,
