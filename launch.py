@@ -3,7 +3,7 @@ import logging
 
 from flask import Flask
 
-from . import api
+from app import api
 
 _LOGGER = logging.getLogger('app')
 _LOGGER.setLevel(logging.INFO)

@@ -1,12 +1,11 @@
 import os
 import logging
 
+SETTINGS_PATH = os.path.join(os.path.dirname(__file__), 'settings', 'settings.json')
+
 _LOGGER = logging.getLogger('SETTINGS')
 _LOGGER.setLevel(logging.INFO)
 _LOGGER.info("Settings in: {}".format(SETTINGS_PATH))
-
-
-SETTINGS_PATH = os.path.join(os.path.dirname(__file__), 'settings', 'settings.json')
 
 def _settings():
     try:
