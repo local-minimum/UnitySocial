@@ -6,7 +6,7 @@ import os
 import hashlib
 
 if len(sys.argv != 5):
-    return "{} GAME SCORE_NAME NAME SCORE"
+    print("{} GAME SCORE_NAME NAME SCORE")
     sys.exit(0)
 
 _, game, score_type, name, score = sys.argv
