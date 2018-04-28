@@ -1,5 +1,6 @@
 import os
 import logging
+import json
 
 SETTINGS_PATH = os.path.join(
     os.path.dirname(__file__), 'settings', 'settings.json',
