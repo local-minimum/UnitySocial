@@ -53,16 +53,15 @@ checksum = hashlib.md5(
     "{}{}{}".format(name, score, secret).encode('utf8'),
 ).hexdigest()
 
+print("** Posting: name {} score {} checksum {}".format(name, score, checksum))
 print(
-    "localhost:{}{}/highscore/{}/{}".format(
+    "** To: httlp://localhost:{}{}/highscore/{}/{}".format(
         port, service, game, score_type,
     ),
 )
-print("name {} score {} checksum {}".format(name, score, checksum))
-sys.exit(0)
 
 requests.post(
-    "localhost:{}{}/highscore/{}/{}".format(
+    "http://localhost:{}{}/highscore/{}/{}".format(
         port, service, game, score_type,
     ),
     data = {
