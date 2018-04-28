@@ -42,8 +42,8 @@ For nginx it may look like this:
 
 ## Planned future features
 
-- [ ] Clean up code.
-- [ ] Allow changing settings without restarting service
+- [x] Clean up code.
+- [x] Allow changing settings without restarting service
 - [ ] Add a status page for `/highscore/<game>` that lists top X for all scores o the game.
 - [ ] Allow request to get any number of scores (within reason).
 - [ ] Include updated C# code for use in unity to communicate with this service into this repository.
