@@ -2,6 +2,8 @@
 
 For now only highscores other features may come.
 
+**Please note that this solution only offers moderate security and should not be used in any comercial or higher impact solution but should hopefully be more than enough for jam-games and similar**
+
 ## Example `docker-compose.yml`
 
 ```
