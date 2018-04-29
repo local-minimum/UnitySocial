@@ -8,11 +8,11 @@
   </head>
   <body>
     <div class="container">
-      <h1>Highscores for: <em>{{ name }}<em></h1>
+      <h1>Highscores for: <em>{{ name }}</em></h1>
       {% for score in scores.values() %}
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3>
+          <h4>
             {{ score.name }}
             {% if not score.count %}
             <span class="label label-warning">
@@ -23,7 +23,7 @@
               {{ score.count }} Highscores
             </span>
             {% endif %}
-          </h3>
+          </h4>
         </div>
         <div class="panel-body">
           {% if score.description %}
