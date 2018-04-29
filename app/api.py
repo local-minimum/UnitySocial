@@ -93,7 +93,7 @@ def add_api(app):
             scores[score_type].update(
                 count=len(ranked_highscores),
                 type=score_type,
-                name=name,
+                name=score_settings.get('name', score_type.capitalize()),
                 score_name=score_settings.get("scoreName", "Score"),
             )
             all_highscores[score_type] = ranked_highscores[:count]
