@@ -19,8 +19,8 @@ def add_api(app):
 
     @app.route("{}".format(APP_ROOT if APP_ROOT else "/"))
     def api_about():
-        render_template("about.html")
-        
+        return render_template("about.html")
+
     @app.route(
         "{}/highscore/<game>/<score_type>".format(APP_ROOT),
         methods=["POST"],
