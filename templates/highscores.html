@@ -12,16 +12,18 @@
       {% for score in scores.values() %}
       <div class="panel panel-default">
         <div class="panel-heading">
-          <stong>{{ score.name }}</strong>
-          {% if not score.count %}
-          <span class="label label-warning">
-            No Highscores
-          </span>
-          {% else %}
-          <span class="label label-success">
-            {{ score.count }} Highscores
-          </span>
-          {% endif %}
+          <h3>
+            {{ score.name }}
+            {% if not score.count %}
+            <span class="label label-warning">
+              No Highscores
+            </span>
+            {% else %}
+            <span class="label label-success">
+              {{ score.count }} Highscores
+            </span>
+            {% endif %}
+          </h3>
         </div>
         <div class="panel-body">
           {% if score.description %}
