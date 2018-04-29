@@ -10,38 +10,44 @@
     <div class="container">
       <h1>Highscores for: <em>{{ name }}<em></h1>
       {% for score in scores.values() %}
-      <h2>{{ score.name }}</h2>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Score</th>
-          </tr>
-        </thead>
-        <tbody>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <stong>{{ score.name }}</strong>
           {% if not score.count %}
-          <tr class="warning">
-            <td colspan="3">
-              No highscores yet!
-            </td>
-          </tr>
+          <span class="label label-warning">
+            No Highscores
+          </span>
           {% else %}
-          <tr class="success">
-            <td colspan="3">
-              {{ score.count }} highscores registered.
-            </td>
-          </tr>
+          <span class="label label-success">
+            {{ score.count }} Highscores
+          </span>
           {% endif %}
-          {% for entry in all_highscores[score.type] %}
-          <tr>
-            <th scope="row">{{ entry.rank }}</th>
-            <td>{{ entry.name }}</td>
-            <td>{{ entry.score }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        <div class="panel-body">
+          {% if score.description %}
+          <p class="text-justify">{{ score.description }}</p>
+          {% else %}
+          <p class="text-justify">No explanation given for this high-score, hopefully it is self-explanatory.</p>
+          {% endif %}
+        </div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>{{score.score_name}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for entry in all_highscores[score.type] %}
+            <tr>
+              <th scope="row">{{ entry.rank }}</th>
+              <td>{{ entry.name }}</td>
+              <td>{{ entry.score }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
       {% endfor %}
     </div>
   </body>
