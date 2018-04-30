@@ -9,10 +9,14 @@ _LOGGER = logging.getLogger('API')
 _LOGGER.setLevel(logging.INFO)
 
 APP_ROOT = os.environ.get("HIGHSCORE_APP_ROOT", "")
+MAX_HIGHSCORES = int(os.environ.get("HIGHSCORE_MAX_COUNT", 100))
+DEFAULT_HIGHSCORES = int(os.environ.get("DEFAULT_HIGHSCORES", 20))
 
 
 def entry_to_raw(entry, delim):
-    return "{}{}{}{}{}".format(entry['rank'], delim, entry['name'], delim, entry['score'])
+    return "{}{}{}{}{}".format(
+        entry['rank'], delim, entry['name'], delim, entry['score'],
+    )
 
 
 def add_api(app):
@@ -60,7 +64,14 @@ def add_api(app):
         if not settings.has_game_scores(game, score_type):
             _LOGGER.error('Unknown Game/Score {}/{}'.format(game, score_type))
             abort(404)
-        count = 10
+        game_settings = settings.get_game_settings(game)
+        count = min(
+            request.args.get(
+                'count',
+                game_settings.get('scoresToList', DEFAULT_HIGHSCORES),
+            ),
+            MAX_HIGHSCORES,
+        )
         score_settings = settings.get_score_settings(game, score_type)
         _, highscores = transactions.get_highscores(
             game, score_type, score_settings['score'],
@@ -68,7 +79,6 @@ def add_api(app):
         scores = actions.get_sorted_ranked_scores(
             highscores, score_settings["sort"],
         )
-        game_settings = settings.get_game_settings(game)
         if (game_settings['type'] == 'raw'):
             return game_settings['line'].join(
                 [entry_to_raw(entry, game_settings['delimiter'])
@@ -83,7 +93,14 @@ def add_api(app):
     def api_get_scores_page(game):
         scores = settings.get_game_scores(game)
         name = settings.get_game_name(game)
-        count = 15
+        game_settings = settings.get_game_settings(game)
+        count = min(
+            request.args.get(
+                'count',
+                game_settings.get('scoresToList', DEFAULT_HIGHSCORES),
+            ),
+            MAX_HIGHSCORES,
+        )
         all_highscores = {}
         score_types = list(scores.keys())
         for score_type in score_types:
