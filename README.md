@@ -2,6 +2,8 @@
 
 For now only highscores other features may come.
 
+**Please note that this solution only offers moderate security and should not be used in any comercial or higher impact solution but should hopefully be more than enough for jam-games and similar**
+
 ## Example `docker-compose.yml`
 
 ```
@@ -19,14 +21,8 @@ services:
         environment:
             - HIGHSCORE_SECRET=somethingrandomsecret
             - HIGHSCORE_APP_ROOT=/unity
-            - HIGHSCORE_MAX_COUNT=40
-            - DEFAULT_HIGHSCORES=10
 ```            
 You need to change the secret and you might need another external port.
-
-* `HIGHSCORE_MAX_COUNT` will set the limit for how many highscores can be requested.
-* `DEFAULT_HIGHSCORES` will set the default count if not overridden by game settings
-or the api-request.
 
 ## Configurating your gateway
 If you're hosting a webgame somewhere like itch.io, you will need to have https setup for the service for browsers to allow communications with the server.
@@ -52,5 +48,5 @@ For nginx it may look like this:
 - [x] Allow changing settings without restarting service
 - [x] Add a status page for `/highscore/<game>` that lists top X for all scores o the game.
 - [x] Add optional score settings support to name the score value (e.g. 'score', 'time', '$$$')
-- [x] Allow request to get any number of scores (within reason).
+- [ ] Allow request to get any number of scores (within reason).
 - [x] Include updated C# code for use in unity to communicate with this service into this repository.
