@@ -82,7 +82,7 @@ def add_endpoins(app):
         if (game_settings['type'] == 'raw'):
             return game_settings['line'].join(
                 [entry_to_raw(entry, game_settings['delimiter'])
-                for entry in scores],
+                for entry in scores[:count]],
             )
         _LOGGER.error('Unsupported game settings')
         abort(404)
