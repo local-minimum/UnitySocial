@@ -6,7 +6,7 @@ For now only highscores other features may come.
 
 ## Example `docker-compose.yml`
 
-```
+```yml
 version: '3.1'
 services:
     highscores:
@@ -24,11 +24,17 @@ services:
             - HIGHSCORE_MAX_COUNT=50
             - DEFAULT_HIGHSCORES
 ```            
+Note that the external port must be something your gateway redirects to.
+
+### Volumes
+* You need to have a `settings.json` mounted (see settings https://github.com/local-minimum/UnitySocial/edit/master/settings/README.md)
+* The database directory can be empty.
+
 ### Environmental variables
 * `HIGHSCORE_SECRET` you need to set something and it should never be commited to github or shared.
 * `HIGHSCORE_APP_ROUTE` (optional) if you wish the service to identify with some prefix.
-* `HIGHSCORE_MAX_COUNT` (optional) The max number of highscores allowed to get from the api
-You need to change the secret and you might need another external port.
+* `HIGHSCORE_MAX_COUNT` (optional) The max number of highscores allowed to get from the api (defaults to 100).
+* `DEFAULT_HIGHSCORES` (optional)  The default number of highscores gotten from api (defaults to 20)
 
 ## Configurating your gateway
 If you're hosting a webgame somewhere like itch.io, you will need to have https setup for the service for browsers to allow communications with the server.
@@ -54,5 +60,5 @@ For nginx it may look like this:
 - [x] Allow changing settings without restarting service
 - [x] Add a status page for `/highscore/<game>` that lists top X for all scores o the game.
 - [x] Add optional score settings support to name the score value (e.g. 'score', 'time', '$$$')
-- [ ] Allow request to get any number of scores (within reason).
+- [x] Allow request to get any number of scores (within reason).
 - [x] Include updated C# code for use in unity to communicate with this service into this repository.
