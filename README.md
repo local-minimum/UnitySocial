@@ -53,12 +53,3 @@ For nginx it may look like this:
             add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
         }
 ```
-
-## Planned future features
-
-- [x] Clean up code.
-- [x] Allow changing settings without restarting service
-- [x] Add a status page for `/highscore/<game>` that lists top X for all scores o the game.
-- [x] Add optional score settings support to name the score value (e.g. 'score', 'time', '$$$')
-- [x] Allow request to get any number of scores (within reason).
-- [x] Include updated C# code for use in unity to communicate with this service into this repository.
