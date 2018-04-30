@@ -21,7 +21,13 @@ services:
         environment:
             - HIGHSCORE_SECRET=somethingrandomsecret
             - HIGHSCORE_APP_ROOT=/unity
+            - HIGHSCORE_MAX_COUNT=50
+            - DEFAULT_HIGHSCORES
 ```            
+### Environmental variables
+* `HIGHSCORE_SECRET` you need to set something and it should never be commited to github or shared.
+* `HIGHSCORE_APP_ROUTE` (optional) if you wish the service to identify with some prefix.
+* `HIGHSCORE_MAX_COUNT` (optional) The max number of highscores allowed to get from the api
 You need to change the secret and you might need another external port.
 
 ## Configurating your gateway
