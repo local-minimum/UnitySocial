@@ -3,7 +3,7 @@ import logging
 
 from flask import Flask
 
-from app import api
+from app import routes
 
 _LOGGER = logging.getLogger('app')
 _LOGGER.setLevel(logging.INFO)
@@ -11,7 +11,7 @@ _LOGGER.setLevel(logging.INFO)
 
 def create_app():
     app = Flask("HighScores")
-    api.add_api(app)
+    routes.add_endpoins(app)
     return app
 
 

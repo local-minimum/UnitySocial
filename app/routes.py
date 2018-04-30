@@ -19,7 +19,7 @@ def entry_to_raw(entry, delim):
     )
 
 
-def add_api(app):
+def add_endpoins(app):
 
     @app.route("{}".format(APP_ROOT if APP_ROOT else "/"))
     def api_about():
@@ -66,10 +66,10 @@ def add_api(app):
             abort(404)
         game_settings = settings.get_game_settings(game)
         count = min(
-            request.args.get(
+            int(request.args.get(
                 'count',
                 game_settings.get('scoresToList', DEFAULT_HIGHSCORES),
-            ),
+            )),
             MAX_HIGHSCORES,
         )
         score_settings = settings.get_score_settings(game, score_type)
@@ -95,10 +95,10 @@ def add_api(app):
         name = settings.get_game_name(game)
         game_settings = settings.get_game_settings(game)
         count = min(
-            request.args.get(
+            int(request.args.get(
                 'count',
                 game_settings.get('scoresToList', DEFAULT_HIGHSCORES),
-            ),
+            )),
             MAX_HIGHSCORES,
         )
         all_highscores = {}
