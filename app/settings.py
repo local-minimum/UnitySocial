@@ -1,6 +1,7 @@
 import os
 import logging
 import json
+from itertools import chain
 from json.decoder import JSONDecodeError
 
 SETTINGS_PATH = os.path.join(
