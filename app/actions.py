@@ -4,6 +4,7 @@ import hashlib
 from functools import cmp_to_key
 from . import settings
 
+
 def _get_secret():
     return os.environ.get("HIGHSCORE_SECRET", "RatatosK")
 

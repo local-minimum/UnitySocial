@@ -64,7 +64,7 @@ requests.post(
     "http://localhost:{}{}/highscore/{}/{}".format(
         port, service, game, score_type,
     ),
-    data = {
+    data={
         "name": name,
         "score": score,
         "checkSum": checksum,
