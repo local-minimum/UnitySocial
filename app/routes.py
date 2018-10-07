@@ -1,7 +1,7 @@
 import os
 import logging
 from flask import request, abort, render_template
-from . import settings
+from .settings import Settings
 from . import transactions
 from . import actions
 
@@ -23,6 +23,7 @@ def add_endpoins(app):
 
     @app.route("{}".format(APP_ROOT if APP_ROOT else "/"))
     def api_about():
+        settings = Settings()
         services = [
             {"url": "{}{}".format(APP_ROOT, k), "description": v}
             for k, v in settings.discover_active_services()
@@ -34,6 +35,7 @@ def add_endpoins(app):
         methods=["POST"],
     )
     def api_post_highscore(game, score_type):
+        settings = Settings()
         req = request.form
         try:
             if actions.is_valid_request(game, score_type, req):
@@ -63,6 +65,7 @@ def add_endpoins(app):
         "{}/highscore/<game>/<score_type>".format(APP_ROOT), methods=["GET"],
     )
     def api_get_highscore(game, score_type):
+        settings = Settings()
         if not settings.has_game_scores(game, score_type):
             _LOGGER.error('Unknown Game/Score {}/{}'.format(game, score_type))
             abort(404)
@@ -95,6 +98,7 @@ def add_endpoins(app):
         "{}/highscore/<game>".format(APP_ROOT), methods=["GET"],
     )
     def api_get_scores_page(game):
+        settings = Settings()
         scores = settings.get_game_scores(game)
         name = settings.get_game_name(game)
         game_settings = settings.get_game_settings(game)
