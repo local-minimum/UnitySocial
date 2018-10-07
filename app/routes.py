@@ -25,7 +25,7 @@ def add_endpoins(app):
     def api_about():
         services = [
             {"url": "{}{}".format(APP_ROOT, k), "description": v}
-            for k, v in discover_active_services()
+            for k, v in settings.discover_active_services()
         ]
         return render_template("about.html", services=services)
 
