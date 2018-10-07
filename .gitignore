@@ -17,3 +17,6 @@ Thumbs.db
 docker-compose.yml
 /settings/settings.json*
 /db/*.json*
+
+
+/.tox/
