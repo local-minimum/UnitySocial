@@ -1,7 +1,7 @@
 FROM python:3
 RUN pip install flask
 
-COPY ./app /app
+COPY app /app
 COPY launch.py /
 COPY templates /templates
 RUN mkdir /app/db
