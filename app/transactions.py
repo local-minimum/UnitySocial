@@ -4,7 +4,6 @@ import os
 
 from flask import abort
 
-from . import settings
 from . import actions
 
 
@@ -27,7 +26,7 @@ def get_highscores(game, score_type, dtype):
     return all_highscores, highscores
 
 
-def update_highscore(game, score_type, req):
+def update_highscore(settings, game, score_type, req):
     score_settings = settings.get_score_settings(game, score_type)
     all_highscores, highscores = get_highscores(
         game, score_type, score_settings['score'],

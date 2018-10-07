@@ -2,7 +2,6 @@
 import os
 import hashlib
 from functools import cmp_to_key
-from . import settings
 
 
 def _get_secret():
@@ -23,7 +22,7 @@ def _get_checksum(req):
     ).hexdigest()
 
 
-def is_valid_request(game, score_type, req):
+def is_valid_request(settings, game, score_type, req):
     return (
         settings.has_game_scores(game, score_type)
         and req.get("checkSum", '--invalid--').lower() == _get_checksum(req)

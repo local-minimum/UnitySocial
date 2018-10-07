@@ -38,9 +38,9 @@ def add_endpoins(app):
         settings = Settings()
         req = request.form
         try:
-            if actions.is_valid_request(game, score_type, req):
+            if actions.is_valid_request(settings, game, score_type, req):
                 ranked_entry = transactions.update_highscore(
-                    game, score_type, req,
+                    settings, game, score_type, req,
                 )
                 game_settings = settings.get_game_settings(game)
                 if (game_settings['type'] == 'raw'):
