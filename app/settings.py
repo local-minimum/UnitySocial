@@ -71,7 +71,10 @@ def discover_active_services():
 
     all_services = {'highscore': '(Multiple) Highscores for games'}
     game_settings = set(
-        game_setting_2_service(game) for game in _settings().get('games', {})
+        chain(
+            game_setting_2_service(game)
+            for game in _settings().get('games', {})
+        )
     )
     return {k: v for k, v in all_services.items() if k in game_settings}
 
