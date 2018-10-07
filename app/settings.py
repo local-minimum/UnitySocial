@@ -76,10 +76,10 @@ class Settings:
 
         all_services = {'highscore': '(Multiple) Highscores for games'}
         game_settings = set(
-            chain(
+            chain(*(
                 game_setting_2_service(game)
-                for game in self._settings.get('games', {})
-            )
+                for game in self._settings.get('games', {}).values()
+            ))
         )
         return {k: v for k, v in all_services.items() if k in game_settings}
 
