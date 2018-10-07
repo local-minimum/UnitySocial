@@ -15,9 +15,15 @@
       <div class="well"><a href="https://github.com/local-minimum/UnitySocial">Source Code @ Github</a></div>
 
       <h2>Supported services</h2>
-      <ul>
-        <li><a href="./highscore">Highscores</a></li>
-      </ul>
+      {% if services %}
+        <ul>
+          {% for service in services %}
+            <li><a href="{{service.url}}">{{service.description}}</a></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="alert">No service registered, this is rather useless</div>
+      {% endif %}
     </div>
   </body>
 </html>

@@ -62,6 +62,20 @@ def get_game_settings(game):
     return game_settings
 
 
+def discover_active_services():
+    def game_setting_2_service(game):
+        ret = []
+        if 'scores' in game:
+            ret.append('highscore')
+        return ret
+
+    all_services = {'highscore': '(Multiple) Highscores for games'}
+    game_settings = set(
+        game_setting_2_service(game) for game in _settings().get('games', {})
+    )
+    return {k: v for k, v in all_services.items() if k in game_settings}
+
+
 def get_score_settings(game, score_type):
     def _get_sort(s):
         if s == "ascending":

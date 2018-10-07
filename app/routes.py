@@ -23,7 +23,11 @@ def add_endpoins(app):
 
     @app.route("{}".format(APP_ROOT if APP_ROOT else "/"))
     def api_about():
-        return render_template("about.html")
+        services = [
+            {"url": "{}{}".format(APP_ROOT, k), "description": v}
+            for k, v in discover_active_services()
+        ]
+        return render_template("about.html", services=services)
 
     @app.route(
         "{}/highscore/<game>/<score_type>".format(APP_ROOT),
