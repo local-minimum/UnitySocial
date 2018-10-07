@@ -14,10 +14,10 @@ _LOGGER.info("Settings in: {}".format(SETTINGS_PATH))
 
 
 class Settings:
-    def __init__(self, source):
-        self._settings = self.load(source)
+    def __init__(self, source=SETTINGS_PATH):
+        self._settings = self._load(source)
 
-    def load(self, source=SETTINGS_PATH):
+    def _load(self, source):
         try:
             if isinstance(source, str):
                 with open(SETTINGS_PATH) as fh:
