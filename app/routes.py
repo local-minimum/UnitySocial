@@ -31,6 +31,18 @@ def add_endpoins(app):
         return render_template("about.html", services=services)
 
     @app.route(
+        "{}/highscore".format(APP_ROOT),
+        methods=["GET"],
+    )
+    def api_highscore_games():
+        settings = Settings()
+        games = [
+            {"url": "{}/highscore/{}".format(APP_ROOT, k), "description": k}
+            for k in settings.get_games_that_uses('scores')
+        ]
+        return render_template("service.html", name="Highscores", games=games)
+
+    @app.route(
         "{}/highscore/<game>/<score_type>".format(APP_ROOT),
         methods=["POST"],
     )

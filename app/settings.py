@@ -60,17 +60,29 @@ class Settings:
         return True
 
     def get_game_settings(self, game):
-        game_settings = self._settings.get('games', {}).get('settings', {
-            "type": "raw",
-            "delimiter": "\t",
-            "line": "\n",
-        })
-        return game_settings
+        ret = {}
+        ret.setdefault("type", "raw")
+        ret.setdefault("delimiter", "\t")
+        ret.setdefault("line", '\n')
+        ret.setdefault("discoverability", 'listed')
+        game_settings = (
+            self._settings.get('games', {}).get(game, {}).get('settings', ret)
+        )
+        ret.update(game_settings)
+        return ret
+
+    @staticmethod
+    def _is_listed(game):
+        return (
+            game
+            .get('settings', {})
+            .get('discoverability', 'listed') == 'listed'
+        )
 
     def discover_active_services(self):
         def game_setting_2_service(game):
             ret = []
-            if 'scores' in game:
+            if 'scores' in game and self._is_listed(game):
                 ret.append('highscore')
             return ret
 
@@ -83,8 +95,19 @@ class Settings:
         )
         return {k: v for k, v in all_services.items() if k in game_settings}
 
+    def get_games_that_uses(self, service):
+        def has_service(game):
+            return self._is_listed(game) and service in game
+
+        assert service in ['scores']
+        games = set(
+            k for k, v in self._settings.get('games', {}).items()
+            if has_service(v)
+        )
+        return sorted(games)
+
     def get_score_settings(self, game, score_type):
-        def _get_sort(s):
+        def _sorter(s):
             if s == "ascending":
                 return -1
             elif s == "descending":
@@ -94,7 +117,7 @@ class Settings:
             else:
                 return s
 
-        def _get_type(s):
+        def _converter(s):
             if s == "int":
                 return int
             elif s == "float":
@@ -104,14 +127,14 @@ class Settings:
             else:
                 return s
 
-        game_settings = self._settings.get(
-            'games', {}).get(game, {}).get('scores', {})
-        if score_type not in game_settings:
-            _LOGGER.error("{} not in {}".format(score_type, self._settings))
-        score_settings = game_settings.get(score_type, {
-            "sort": "ascending",
-            "score": "int",
-        })
-        score_settings["sort"] = _get_sort(score_settings["sort"])
-        score_settings["score"] = _get_type(score_settings["score"])
-        return score_settings
+        if not self.has_game_scores(game, score_type):
+            _LOGGER.error("{} not known to {}".format(score_type, game))
+        game_settings = self.get_game_scores(game)
+        ret = {}
+        ret.setdefault('sort', 'ascending')
+        ret.setdefault('score', 'int')
+        score_settings = game_settings.get(score_type, ret)
+        ret.update(score_settings)
+        ret["sort"] = _sorter(score_settings["sort"])
+        ret["score"] = _converter(score_settings["score"])
+        return ret
