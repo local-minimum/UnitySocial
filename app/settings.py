@@ -36,23 +36,21 @@ class Settings:
             )
         return settings
 
+    def _get_game(self, game):
+        return self._settings.get('games', {}).get(game, {})
+
     def get_game_name(self, game):
-        return (
-            self._settings
-            .get('games', {})
-            .get(game, {})
-            .get('name', game.capitalize())
-        )
+        return self._get_game(game).get('name', game.capitalize())
 
     def get_game_scores(self, game):
-        game_settings = self._settings.get('games', {}).get(game, False)
+        game_settings = self._get_game(game)
         if not game_settings:
             _LOGGER.warning("Game {} not in settings".format(game))
             return {}
         return game_settings.get('scores', {})
 
     def has_game_scores(self, game, score_type):
-        game_settings = self._settings.get('games', {}).get(game, False)
+        game_settings = self._get_game(game)
         if not game_settings:
             return False
         if not game_settings.get('scores', {}).get(score_type, False):
@@ -66,7 +64,7 @@ class Settings:
         ret.setdefault("line", '\n')
         ret.setdefault("discoverability", 'listed')
         game_settings = (
-            self._settings.get('games', {}).get(game, {}).get('settings', ret)
+            self._get_game(game).get('settings', ret)
         )
         ret.update(game_settings)
         return ret

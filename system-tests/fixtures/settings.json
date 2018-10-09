@@ -1,0 +1,30 @@
+  {
+      "games": {
+          "debug": {
+              "settings": {
+                  "delimiter": ",",
+                  "line": "\r\n"
+              },
+              "scores": {
+                  "test": {
+                      "sort": "ascending",
+                      "score": "int"
+                  }
+              }
+          },
+          "debug2": {
+              "name": "Crazy",
+              "scores": {
+                  "test2": {}
+              }
+          },
+          "debug3": {
+              "settings": {
+                  "discoverability": "unlisted"
+              },
+              "scores": {
+                  "test": {}
+              }
+          }
+      }
+  }

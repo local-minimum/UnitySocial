@@ -1,23 +1,57 @@
-import importlib.util
-from glob import glob
-import os
-
 import pytest
+import json
+from io import StringIO
+
+import app.settings
 
 
-@pytest.fixture(scope="session")
-def app():
-    class Container:
-        pass
-    container = Container()
-    for path in glob(
-        os.path.join(os.path.dirname(__file__), os.pardir, 'app', '*.py'),
-    ):
-        name = os.path.basename(path).split(".", 1)[0]
-        if name == "__init__":
-            continue
-        spec = importlib.util.spec_from_file_location('name', path)
-        setattr(container, name, importlib.util.module_from_spec(spec))
-        spec.loader.exec_module(getattr(container, name))
-    print(dir(container))
-    return container
+@pytest.fixture
+def empty_settings():
+    settings = StringIO()
+    return app.settings.Settings(settings)
+
+
+@pytest.fixture
+def game_settings():
+    settings = StringIO()
+    json.dump({
+        'games': {
+            'debug': {
+                'settings': {
+                    "delimiter": ",",
+                    "line": '\r\n',
+                },
+                'scores': {
+                    'test': {
+                        'sort': 'ascending',
+                        'score': 'int',
+                    }
+                }
+            },
+            'debug2': {
+                'name': 'Crazy',
+                'scores': {
+                    'test2': {},
+                }
+            },
+            'debug3': {
+                'settings': {
+                    'discoverability': 'unlisted',
+                },
+                'scores': {
+                    'test': {},
+                },
+            },
+            'debug4': {
+                'settings': {
+                    'discoverability': 'hidden',
+                },
+                'scores': {
+                    'test': {},
+                },
+            }
+        }
+    }, settings)
+    settings.flush()
+    settings.seek(0)
+    return app.settings.Settings(settings)
