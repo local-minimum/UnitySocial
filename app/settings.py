@@ -13,6 +13,14 @@ _LOGGER.setLevel(logging.INFO)
 _LOGGER.info("Settings in: {}".format(SETTINGS_PATH))
 
 
+class MissingSettings(ValueError):
+    pass
+
+
+class SettingsNotSupported(ValueError):
+    pass
+
+
 class Settings:
     def __init__(self, source=SETTINGS_PATH):
         self._settings = self._load(source)
@@ -137,5 +145,38 @@ class Settings:
         ret["score"] = _converter(score_settings["score"])
         return ret
 
+    def has_messages(self, game, message_type):
+        game_settings = self._get_game(game)
+        if not game_settings:
+            return False
+        if not game_settings.get('messages', {}).get(message_type, False):
+            return False
+        return True
+
     def get_message_settings(self game, message_type):
+        def get_sort(sortname):
+            if sortname is None:
+                return lambda a, b: 0
+            elif sortname == 'modified':
+                return lambda a, b: (b['modified'] - a['modified']).total_scondds()
+            elif sortname == 'modified-descending':
+                return lambda a, b: (a['modified'] - b['modified']).total_scondds()
+            elif sortname == 'star':
+                return lambda a, b: b['star'] - a['star']
+            elif sortname == 'star-descending':
+                return lambda a, b: a['star'] - b['star']
+            else:
+                raise SettingsNotSupported("{} not recognized sort type ({}:{})".format(
+                    sortname, game, message_type,
+                ))
+
+
+        if not self.has_messages(game, message_type):
+            msg = "{} not known to {}".format(message_type, game)
+            _LOGGER.error(msg)
+            raise MissingSettings(msg)
+
+        message_settings = self._get_game(game).get(message_settings, {})
+        maxlen = message_settings.get('maxLength')
+        sort = get_sort(message_settings.get('sort'))
         return sort, maxlen

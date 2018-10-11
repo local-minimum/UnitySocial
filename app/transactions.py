@@ -86,7 +86,7 @@ def add_message(settings, game, message_type, req):
         "modified": now,
         "id": maxid + 1,
     }
-    messages = messages[:maxlen - 1]
+    messages = messages[:maxlen - 1 if maxlen is not None else None]
     messages.append(entry)
     messages = sorted(messages, key=cmp_to_key(sort))
     all_messages[message_type] = messages
