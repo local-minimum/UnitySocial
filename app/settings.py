@@ -136,3 +136,6 @@ class Settings:
         ret["sort"] = _sorter(score_settings["sort"])
         ret["score"] = _converter(score_settings["score"])
         return ret
+
+    def get_message_settings(self game, message_type):
+        return sort, maxlen

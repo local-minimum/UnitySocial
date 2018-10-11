@@ -4,9 +4,9 @@ Using JSON should have settings in `settings.json`.
 
 ```json
 {
-  "settings": {
-  },
   "games": {
+    "settings": {
+    },
     "mygame": {
       "settings": {
         "type": "raw",
@@ -46,7 +46,7 @@ This can be overridden by `?count=XX` in the request.
 There's also a global defaults environmental variable for the container which
 will be used if this is omitted.
 * `name` is the human readable name of the game, if omitted the capitalized key
-for the game will be used. 
+for the game will be used.
 
 ### Scores
 
