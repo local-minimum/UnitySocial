@@ -1,3 +1,5 @@
+from functools import cmp_to_key
+
 import pytest
 
 
@@ -58,3 +60,28 @@ def test_get_score_settings(game_settings):
 
 def test_get_games_that_uses(game_settings):
     assert game_settings.get_games_that_uses('scores') == ['debug', 'debug2']
+
+
+@pytest.mark.parametrize("game,message_type,expect", (
+    ('debug', 'test', True),
+    ('debug', 'test2', True),
+    ('debug', 'test4', False),
+    ('debug2', 'test', False),
+))
+def test_has_messages(game_settings, game, message_type, expect):
+    assert game_settings.has_messages(game, message_type) is expect
+
+
+@pytest.mark.parametrize("message_type,idorder,maxlen", (
+    ('test', [0, 2, 1], 20),
+    ('test2', [1, 0, 2], None),
+    ('test3', [0, 1, 2], 10),
+))
+def test_get_message_settings(
+    game_settings, example_messages, message_type, idorder, maxlen,
+):
+    sort, maxln = game_settings.get_message_settings('debug', message_type)
+    assert maxln == maxlen
+    assert [
+        e['id'] for e in sorted(example_messages, key=cmp_to_key(sort))
+    ] == idorder

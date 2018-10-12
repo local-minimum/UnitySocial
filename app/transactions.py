@@ -78,7 +78,7 @@ def add_message(settings, game, message_type, req):
     sort, maxlen = settings.get_message_settings(game, message_type)
     all_messages, messages = get_messages(game, message_type, sort)
     now = dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%M")
-    mmxid = max(e['id'] for e in messages) if messages else 0
+    maxid = max(e['id'] for e in messages) if messages else 0
     entry = {
         "msg": req['msg'],
         "star": 0,
@@ -97,8 +97,9 @@ def add_message(settings, game, message_type, req):
 
 def star_by_id(settings, game, message_type, req):
     msgid = int(req['id'])
-    with open(MESSAGES_PATTERN.format(game)) as fh:
-        all_messages = json.load(fh)
+    try:
+        with open(MESSAGES_PATTERN.format(game)) as fh:
+            all_messages = json.load(fh)
     except FileNotFoundError:
         all_messages = {}
 
