@@ -3,6 +3,7 @@ import logging
 import json
 from itertools import chain
 from json.decoder import JSONDecodeError
+import datetime as dt
 
 SETTINGS_PATH = os.path.join(
     os.path.dirname(__file__), 'settings', 'settings.json',
@@ -159,10 +160,14 @@ class Settings:
                 return lambda a, b: 0
             elif sortname == 'modified':
                 return lambda a, b: (
-                    a['modified'] - b['modified']).total_seconds()
+                    dt.datetime.strptime(a['modified'], "%Y-%m-%dT%H:%M")
+                    - dt.datetime.strptime(b['modified'], "%Y-%m-%dT%H:%M")
+                ).total_seconds()
             elif sortname == 'modified-descending':
                 return lambda a, b: (
-                    b['modified'] - a['modified']).total_seconds()
+                    dt.datetime.strptime(b['modified'], "%Y-%m-%dT%H:%M")
+                    - dt.datetime.strptime(a['modified'], "%Y-%m-%dT%H:%M")
+                ).total_seconds()
             elif sortname == 'star':
                 return lambda a, b: a['star'] - b['star']
             elif sortname == 'star-descending':

@@ -58,6 +58,7 @@ MESSAGES_PATTERN = os.path.join(os.path.dirname(__file__), 'db', '{}.messages')
     "star": int
     "created": datestr
     "modified": datestr
+    "id": int
 }
 """
 
@@ -72,6 +73,11 @@ def get_messages(game, message_type, sort):
     return all_messages, sorted(
         all_messages.get(message_type, []), key=cmp_to_key(sort)
     )
+
+
+def save_messages(game, all_messages):
+    with open(MESSAGES_PATTERN.format(game), 'w') as fh:
+        json.dump(all_messages, fh)
 
 
 def add_message(settings, game, message_type, req):
@@ -89,21 +95,15 @@ def add_message(settings, game, message_type, req):
     messages = messages[:maxlen - 1 if maxlen is not None else None]
     messages.append(entry)
     messages = sorted(messages, key=cmp_to_key(sort))
-    all_messages[message_type] = messages
-    with open(MESSAGES_PATTERN.format(game), 'w') as fh:
-        json.dump(all_messages, fh)
+    all_messages[message_type] = messages[:maxlen]
+    save_messages(game, all_messages)
     return messages
 
 
 def star_by_id(settings, game, message_type, req):
     msgid = int(req['id'])
-    try:
-        with open(MESSAGES_PATTERN.format(game)) as fh:
-            all_messages = json.load(fh)
-    except FileNotFoundError:
-        all_messages = {}
-
-    messages = all_messages.get(message_type, [])
+    sort, _ = settings.get_message_settings(game, message_type)
+    all_messages, messages = get_messages(game, message_type, sort)
     now = dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%M")
     for idx, e in enumerate(messages):
         if e['id'] == msgid:
@@ -111,6 +111,16 @@ def star_by_id(settings, game, message_type, req):
             e["modified"] = now
             messages[idx] = e
             break
+    messages = sorted(messages, key=cmp_to_key(sort))
     all_messages[message_type] = messages
-    with open(MESSAGES_PATTERN.format(game), 'w') as fh:
-        json.dump(all_messages, fh)
+    save_messages(game, all_messages)
+
+
+def get_star_count_by_id(settings, game, message_type, req):
+    msgid = int(req['id'])
+    sort, _ = settings.get_message_settings(game, message_type)
+    all_messages, messages = get_messages(game, message_type, sort)
+    for idx, e in enumerate(messages):
+        if e['id'] == msgid:
+            return e["star"]
+    return None

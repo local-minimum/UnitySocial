@@ -72,23 +72,31 @@ def example_messages():
     return [
         {
             "msg": 'a',
-            "star": 0,
-            "created": now,
-            "modified": now,
+            "star": 1,
+            "created": now.strftime("%Y-%m-%dT%H:%M"),
+            "modified": now.strftime("%Y-%m-%dT%H:%M"),
             "id": 0,
         },
         {
             "msg": 'b',
             "star": 4,
-            "created": now + dt.timedelta(hours=1),
-            "modified": now + dt.timedelta(hours=2),
+            "created": (now + dt.timedelta(hours=1)).strftime(
+                "%Y-%m-%dT%H:%M",
+            ),
+            "modified": (now + dt.timedelta(hours=2)).strftime(
+                "%Y-%m-%dT%H:%M",
+            ),
             "id": 1,
         },
         {
             "msg": 'c',
             "star": 2,
-            "created": now - dt.timedelta(hours=1),
-            "modified": now - dt.timedelta(hours=2),
+            "created": (now - dt.timedelta(hours=1)).strftime(
+                "%Y-%m-%dT%H:%M",
+            ),
+            "modified": (now - dt.timedelta(hours=2)).strftime(
+                "%Y-%m-%dT%H:%M",
+            ),
             "id": 2,
         },
     ]
