@@ -4,6 +4,7 @@ from flask import request, abort, render_template
 from .settings import Settings
 from . import transactions
 from . import actions
+from . import utils
 
 _LOGGER = logging.getLogger('API')
 _LOGGER.setLevel(logging.INFO)
@@ -11,12 +12,6 @@ _LOGGER.setLevel(logging.INFO)
 APP_ROOT = os.environ.get("HIGHSCORE_APP_ROOT", "")
 MAX_HIGHSCORES = int(os.environ.get("HIGHSCORE_MAX_COUNT", 100))
 DEFAULT_HIGHSCORES = int(os.environ.get("DEFAULT_HIGHSCORES", 20))
-
-
-def entry_to_raw(entry, delim):
-    return "{}{}{}{}{}".format(
-        entry['rank'], delim, entry['name'], delim, entry['score'],
-    )
 
 
 def add_endpoins(app):
@@ -56,7 +51,7 @@ def add_endpoins(app):
                 )
                 game_settings = settings.get_game_settings(game)
                 if (game_settings['type'] == 'raw'):
-                    return entry_to_raw(
+                    return utils.scores_to_raw(
                         ranked_entry, game_settings['delimiter'],
                     )
                 _LOGGER.error('Game Settings not supported')
@@ -96,15 +91,9 @@ def add_endpoins(app):
         scores = actions.get_sorted_ranked_scores(
             highscores, score_settings["sort"],
         )
-        if (game_settings['type'] == 'raw'):
-            return game_settings['line'].join(
-                [
-                    entry_to_raw(entry, game_settings['delimiter'])
-                    for entry in scores[:count]
-                ],
-            )
-        _LOGGER.error('Unsupported game settings')
-        abort(404)
+        return utils.serialize(
+            game_settings, scores[:count], utils.scores_to_raw,
+        )
 
     @app.route(
         "{}/highscore/<game>".format(APP_ROOT), methods=["GET"],
@@ -159,11 +148,6 @@ def add_endpoins(app):
         sort, maxlen = settings.get_message_settings(game, message_type)
         _, messages = transactions.get_messages(game, message_type, sort)
         game_settings = settings.get_game_settings(game)
-        if (game_settings['type'] == 'raw'):
-            return game_settings['line'].join([
-                game_settings['delimiter'].join([str(v) for v in [
-                    entry['id'], entry['msg'], entry['star'], entry['created'],
-                    entry['modified'],
-                ]])
-                for entry in messages[:maxlen]
-            ])
+        return utils.serialize(
+            game_settings, messages[:maxlen], utils.message_to_raw,
+        )
