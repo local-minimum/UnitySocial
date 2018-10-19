@@ -145,3 +145,25 @@ def add_endpoins(app):
             name=name,
             all_highscores=all_highscores,
         )
+
+    @app.route(
+        "{}/messages/<game>/<message_type>".format(APP_ROOT), methods=["GET"]
+    )
+    def api_get_messages(game, message_type):
+        settings = Settings()
+        if not settings.has_messages(game, message_type):
+            _LOGGER.error("Unknown Game/Messages {}/{}".format(
+                game, message_type,
+            ))
+            abort(404)
+        sort, maxlen = settings.get_message_settings(game, message_type)
+        _, messages = transactions.get_messages(game, message_type, sort)
+        game_settings = settings.get_game_settings(game)
+        if (game_settings['type'] == 'raw'):
+            return game_settings['line'].join([
+                game_settings['delimiter'].join([str(v) for v in [
+                    entry['id'], entry['msg'], entry['star'], entry['created'],
+                    entry['modified'],
+                ]])
+                for entry in messages[:maxlen]
+            ])
