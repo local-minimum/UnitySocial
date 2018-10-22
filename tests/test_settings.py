@@ -48,7 +48,9 @@ def test_discover_active_services_if_no_games(empty_settings):
 
 def test_discover_active_services_if_games(game_settings):
     assert (
-        set(game_settings.discover_active_services().keys()) == {'highscore'}
+        set(game_settings.discover_active_services().keys()) == {
+            'highscore', 'messages'
+        }
     )
 
 

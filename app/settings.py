@@ -59,7 +59,7 @@ class Settings:
         return game_settings.get('scores', {})
 
     def has_game(self, game):
-        if not game in self._settings.get('games', {}):
+        if game not in self._settings.get('games', {}):
             return False
         elif self.get_game_settings(game)['discoverability'] == 'hidden':
             return False

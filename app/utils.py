@@ -1,3 +1,6 @@
+import os
+
+
 class SeralizationError(ValueError):
     pass
 
@@ -31,4 +34,18 @@ def message_to_raw(entry, delim):
         entry['star'], delim,
         entry['created'], delim,
         entry['modified'],
+    )
+
+
+MAX_HIGHSCORES = int(os.environ.get("HIGHSCORE_MAX_COUNT", 100))
+DEFAULT_HIGHSCORES = int(os.environ.get("DEFAULT_HIGHSCORES", 20))
+
+
+def clip_highscore_count(request, game_settings):
+    return min(
+        int(request.args.get(
+            'count',
+            game_settings.get('scoresToList', DEFAULT_HIGHSCORES),
+        )),
+        MAX_HIGHSCORES,
     )
