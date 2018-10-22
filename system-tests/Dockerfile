@@ -2,12 +2,12 @@
 FROM python:3
 RUN pip install flask
 
-COPY ../app /app
-COPY ../launch.py /
-COPY ../templates /templates
+COPY app /app
+COPY launch.py /
+COPY templates /templates
 RUN mkdir /app/db
 RUN mkdir /app/settings
-COPY fixtures/settings.json /app/settings/settings.json
+COPY system-tests/fixtures/settings.json /app/settings/settings.json
 WORKDIR /
 
 CMD python3 launch.py

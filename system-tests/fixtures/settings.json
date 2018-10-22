@@ -10,6 +10,9 @@
                       "sort": "ascending",
                       "score": "int"
                   }
+              },
+              "messages": {
+                "hello": {}
               }
           },
           "debug2": {
@@ -21,6 +24,14 @@
           "debug3": {
               "settings": {
                   "discoverability": "unlisted"
+              },
+              "scores": {
+                  "test": {}
+              }
+          },
+          "debug4": {
+              "settings": {
+                  "discoverability": "hidden"
               },
               "scores": {
                   "test": {}

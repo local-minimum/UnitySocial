@@ -32,8 +32,12 @@ def add_endpoins(app):
     def api_highscore_games():
         settings = Settings()
         games = [
-            {"url": "{}/highscore/{}".format(APP_ROOT, k), "description": k}
+            {
+                "url": "{}/highscore/{}".format(APP_ROOT, k),
+                "description": settings.get_game_name(k)
+            }
             for k in settings.get_games_that_uses('scores')
+            if settings.has_game(k)
         ]
         return render_template("service.html", name="Highscores", games=games)
 
@@ -43,6 +47,15 @@ def add_endpoins(app):
     )
     def api_post_highscore(game, score_type):
         settings = Settings()
+        if (
+            not settings.has_game(game)
+            or settings.has_game_scores(game, score_type)
+        ):
+            _LOGGER.error(
+                'Unknown Game/Score {}/{}'.format(game, score_type),
+            )
+            abort(404)
+
         req = request.form
         try:
             if actions.is_valid_request(settings, game, score_type, req):
@@ -56,11 +69,6 @@ def add_endpoins(app):
                     )
                 _LOGGER.error('Game Settings not supported')
                 abort(404)
-            elif not settings.has_game_scores(game, score_type):
-                _LOGGER.error(
-                    'Unknown Game/Score {}/{}'.format(game, score_type),
-                )
-                abort(404)
             else:
                 _LOGGER.error("Rejected post {}".format(req))
                 abort(403)
@@ -73,7 +81,10 @@ def add_endpoins(app):
     )
     def api_get_highscore(game, score_type):
         settings = Settings()
-        if not settings.has_game_scores(game, score_type):
+        if (
+            not settings.has_game(game)
+            or not settings.has_game_scores(game, score_type)
+        ):
             _LOGGER.error('Unknown Game/Score {}/{}'.format(game, score_type))
             abort(404)
         game_settings = settings.get_game_settings(game)
@@ -100,6 +111,8 @@ def add_endpoins(app):
     )
     def api_get_scores_page(game):
         settings = Settings()
+        if not settings.has_game(game):
+            abort(404)
         scores = settings.get_game_scores(game)
         name = settings.get_game_name(game)
         game_settings = settings.get_game_settings(game)
@@ -140,7 +153,10 @@ def add_endpoins(app):
     )
     def api_get_messages(game, message_type):
         settings = Settings()
-        if not settings.has_messages(game, message_type):
+        if (
+            not settings.has_game(game)
+            or not settings.has_messages(game, message_type)
+        ):
             _LOGGER.error("Unknown Game/Messages {}/{}".format(
                 game, message_type,
             ))

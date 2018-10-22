@@ -58,6 +58,14 @@ class Settings:
             return {}
         return game_settings.get('scores', {})
 
+    def has_game(self, game):
+        if not game in self._settings.get('games', {}):
+            return False
+        elif self.get_game_settings(game)['discoverability'] == 'hidden':
+            return False
+
+        return True
+
     def has_game_scores(self, game, score_type):
         game_settings = self._get_game(game)
         if not game_settings:
@@ -138,12 +146,10 @@ class Settings:
             _LOGGER.error("{} not known to {}".format(score_type, game))
         game_settings = self.get_game_scores(game)
         ret = {}
-        ret.setdefault('sort', 'ascending')
-        ret.setdefault('score', 'int')
         score_settings = game_settings.get(score_type, ret)
         ret.update(score_settings)
-        ret["sort"] = _sorter(score_settings["sort"])
-        ret["score"] = _converter(score_settings["score"])
+        ret["sort"] = _sorter(score_settings.get("sort", 'ascending'))
+        ret["score"] = _converter(score_settings.get("score", 'int'))
         return ret
 
     def has_messages(self, game, message_type):
