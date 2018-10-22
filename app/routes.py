@@ -34,12 +34,28 @@ def add_endpoins(app):
         games = [
             {
                 "url": "{}/highscore/{}".format(APP_ROOT, k),
-                "description": settings.get_game_name(k)
+                "description": settings.get_game_name(k),
             }
             for k in settings.get_games_that_uses('scores')
             if settings.has_game(k)
         ]
         return render_template("service.html", name="Highscores", games=games)
+
+    @app.route(
+        "{}/messages".format(APP_ROOT),
+        methods=["GET"],
+    )
+    def api_messages_games():
+        settings = Settings()
+        games = [
+            {
+                "url": "{}/messages/{}".format(APP_ROOT, k),
+                "description": settings.get_game_name(k),
+            }
+            for k in settings.get_games_that_uses('messages')
+            if settings.has_game(k)
+        ]
+        return render_template("service.html", name="Messages", games=games)
 
     @app.route(
         "{}/highscore/<game>/<score_type>".format(APP_ROOT),

@@ -99,9 +99,14 @@ class Settings:
             ret = []
             if 'scores' in game and self._is_listed(game):
                 ret.append('highscore')
+            if 'messages' in game and self._is_listed(game):
+                ret.append('messages')
             return ret
 
-        all_services = {'highscore': '(Multiple) Highscores for games'}
+        all_services = {
+            'highscore': '(Multiple) Highscores for games',
+            'messages': 'Message logs',
+        }
         game_settings = set(
             chain(*(
                 game_setting_2_service(game)
@@ -114,7 +119,7 @@ class Settings:
         def has_service(game):
             return self._is_listed(game) and service in game
 
-        assert service in ['scores']
+        assert service in ['scores', 'messages']
         games = set(
             k for k, v in self._settings.get('games', {}).items()
             if has_service(v)
