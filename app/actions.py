@@ -22,11 +22,8 @@ def _get_checksum(req):
     ).hexdigest()
 
 
-def is_valid_request(settings, game, score_type, req):
-    return (
-        settings.has_game_scores(game, score_type)
-        and req.get("checkSum", '--invalid--').lower() == _get_checksum(req)
-    )
+def is_valid_request(req):
+    return req.get("checkSum", '--invalid--').lower() == _get_checksum(req)
 
 
 def get_entry_rank(scores, entry):

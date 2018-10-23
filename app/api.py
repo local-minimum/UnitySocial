@@ -28,7 +28,7 @@ def add_endpoins(app, approot):
 
         req = request.form
         try:
-            if actions.is_valid_request(settings, game, score_type, req):
+            if actions.is_valid_request(req):
                 ranked_entry = transactions.update_highscore(
                     settings, game, score_type, req,
                 )
@@ -89,3 +89,39 @@ def add_endpoins(app, approot):
         return utils.serialize(
             game_settings, messages[:maxlen], utils.message_to_raw,
         )
+
+    @app.route(
+        "{}/messages/<game>/<message_type>".format(approot),
+        methods=["POST"],
+    )
+    def api_post_messages(game, message_type):
+        settings = Settings()
+        if (
+            not settings.has_game(game)
+            or settings.has_messages(game, message_type)
+        ):
+            _LOGGER.error(
+                'Unknown Game/Message {}/{}'.format(game, message_type),
+            )
+            abort(404)
+
+        req = request.form
+        try:
+            if actions.is_valid_request(req):
+                # ranked_entry = transactions.update_highscore(
+                #    settings, game, score_type, req,
+                # )
+                game_settings = settings.get_game_settings(game)
+                if (game_settings['type'] == 'raw'):
+                    # return utils.scores_to_raw(
+                    #    ranked_entry, game_settings['delimiter'],
+                    # )
+                    return
+                _LOGGER.error('Game Settings not supported')
+                abort(404)
+            else:
+                _LOGGER.error("Rejected post {}".format(req))
+                abort(403)
+        except KeyError:
+            _LOGGER.error('Request missing stuff {}'.format(req))
+            abort(404)

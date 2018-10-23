@@ -12,7 +12,7 @@ import app.actions
     ('debug4', 'test', 'mesaf', '233', False),
     ('debug5', 'test', 'mesaf', '233', False),
 ))
-def test_is_valid_request(game_settings, game, scorename, name, score, expect):
+def test_is_valid_request(game, scorename, name, score, expect):
     req = {
         'name': name,
         'score': score,
@@ -20,4 +20,4 @@ def test_is_valid_request(game_settings, game, scorename, name, score, expect):
             "{}{}RatatosK".format(game, scorename).encode('utf8')
         ).hexdigest(),
     }
-    app.actions.is_valid_request(game_settings, game, score, req) == expect
+    app.actions.is_valid_request(req) == expect
