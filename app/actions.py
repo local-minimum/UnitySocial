@@ -8,22 +8,33 @@ def _get_secret():
     return os.environ.get("HIGHSCORE_SECRET", "RatatosK")
 
 
-def _get_concatenated_request(req):
-    return "{}{}{}".format(
-        req.get("name", ""),
-        req.get("score", ""),
-        _get_secret(),
-    )
+def _get_concatenated_request(req, reqtype):
+    if reqtype == "highscore":
+        if "name" not in req or "score" not in req:
+            return ""
+        return "{}{}{}".format(
+            req.get("name", ""),
+            req.get("score", ""),
+            _get_secret(),
+        )
+    elif reqtype == "message":
+        if "message" not in req:
+            return ""
+        return "{}{}".format(req.get("message"), _get_secret())
+    else:
+        return ""
 
 
-def _get_checksum(req):
+def _get_checksum(req, reqtype):
     return hashlib.md5(
-        _get_concatenated_request(req).encode('utf8'),
+        _get_concatenated_request(req, reqtype).encode('utf8'),
     ).hexdigest()
 
 
-def is_valid_request(req):
-    return req.get("checkSum", '--invalid--').lower() == _get_checksum(req)
+def is_valid_request(req, reqtype):
+    return req.get("checkSum", '--invalid--').lower() == _get_checksum(
+        req, reqtype,
+    )
 
 
 def get_entry_rank(scores, entry):

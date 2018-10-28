@@ -28,14 +28,14 @@ def add_endpoins(app, approot):
 
         req = request.form
         try:
-            if actions.is_valid_request(req):
-                ranked_entry = transactions.update_highscore(
+            if actions.is_valid_request(req, 'highscore'):
+                scores = transactions.update_highscore(
                     settings, game, score_type, req,
                 )
                 game_settings = settings.get_game_settings(game)
                 if (game_settings['type'] == 'raw'):
-                    return utils.scores_to_raw(
-                        ranked_entry, game_settings['delimiter'],
+                    return utils.serialize(
+                        game_settings, scores, utils.scores_to_raw,
                     )
                 _LOGGER.error('Game Settings not supported')
                 abort(404)
@@ -107,16 +107,15 @@ def add_endpoins(app, approot):
 
         req = request.form
         try:
-            if actions.is_valid_request(req):
-                # ranked_entry = transactions.update_highscore(
-                #    settings, game, score_type, req,
-                # )
+            if actions.is_valid_request(req, 'message'):
                 game_settings = settings.get_game_settings(game)
+                messages = transactions.add_message(
+                    settings, game, message_type, req
+                )
                 if (game_settings['type'] == 'raw'):
-                    # return utils.scores_to_raw(
-                    #    ranked_entry, game_settings['delimiter'],
-                    # )
-                    return
+                    return utils.raw_serializer(
+                        game_settings, messages, utils.message_to_raw
+                    )
                 _LOGGER.error('Game Settings not supported')
                 abort(404)
             else:
